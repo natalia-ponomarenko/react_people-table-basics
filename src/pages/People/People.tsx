@@ -10,23 +10,16 @@ export const People:FC = () => {
   const [people, setPeople] = useState<Person[]>([]);
   const [hasLoadingError, setHasLoadingError] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [emptyResponse, setEmptyResponse] = useState(false);
 
   useEffect(() => {
     const loadPeople = async () => {
       setLoading(true);
       setHasLoadingError(false);
-      setEmptyResponse(false);
       try {
         await getPeople()
           .then(data => setPeople(data));
-
-        if (people.length === 0) {
-          setEmptyResponse(true);
-        }
       } catch {
         setHasLoadingError(true);
-        setEmptyResponse(false);
       } finally {
         setLoading(false);
       }
@@ -50,7 +43,9 @@ export const People:FC = () => {
           {hasLoadingError && (
             <LoadingError />
           )}
-          {emptyResponse && (
+          {(people.length === 0
+            && !loading
+            && !hasLoadingError) && (
             <EmptyResponseError />
           )}
         </div>
